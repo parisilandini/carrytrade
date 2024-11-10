@@ -51,7 +51,7 @@ st.markdown("""
 # Go to Paper button
 st.markdown('<div class="button-container">', unsafe_allow_html=True)
 if st.button('Go to Paper'):
-    st.markdown('<meta http-equiv="refresh" content="0;url=https://example.com">', unsafe_allow_html=True)
+    st.markdown('<meta http-equiv="refresh" content="0;url=https://parisi-landini.info">', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 
