@@ -572,7 +572,6 @@ def create_investment_asset_selection():
             merged_filtered = merged_filtered.reset_index(drop=True)
             T=90
             # Calculate the profit for each row
-            merged_filtered.to_excel(f"{row['Investing Code']}.xlsx")
             merged_filtered['Profit %'] =  ((merged_filtered[row['Investing Code']]/merged_filtered[row['Investing Code']].iloc[0] - merged_filtered[row['Borrowing Code']]) * 
 
             (merged_filtered[row['exchange_pair']] / merged_filtered['S_t+T']))
