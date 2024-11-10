@@ -638,7 +638,7 @@ def main():
     if menu == "Investment and Borrowing":
         try:
             create_pairs()
-        except IndexError or KeyError:
+        except (IndexError, KeyError):
             reset_session()
 
 
@@ -646,7 +646,7 @@ def main():
         create_investment_asset_selection()
         try:
             create_investment_asset_selection()  # Call the function to handle investment and borrowing pairs
-        except IndexError or KeyError:
+        except (IndexError, KeyError):
             reset_session()
 
 
