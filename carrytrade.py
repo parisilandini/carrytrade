@@ -218,9 +218,8 @@ def create_pairs():
 
 
         choice = choice.drop(columns=['Start Date', 'End Date',
-                                     'invest_currency','borrow_currency',
+                                     #'invest_currency','borrow_currency',
                                      'Country_x','Country_y'])
-
 
 
         choice = choice.merge(days90[['Country', 'Code']], left_on='Investment Countries', right_on='Country', how='left').rename(columns={'Code': 'Investment Code'})
@@ -238,12 +237,13 @@ def create_pairs():
 
         col_sets = []
         for index, row in choice.iterrows():
-            if not yf.download(f"{row['exchange_pair']}=X", start=my_start_date.strftime('%Y-%m-%d'), end=my_end_date.strftime('%Y-%m-%d'), interval='1d')['Close'].empty:
-                col_sets.append([row['Investment Code'],row['Borrowing Code'],row['exchange_pair'],row['Label']])
+            col_sets.append([row['Investment Code'],row['Borrowing Code'],row['exchange_pair'],row['Label'],
+                             row['invest_currency'],row['borrow_currency']])
 
      
 
-        for i, (invest_col, borrow_col, ticker, label) in enumerate(col_sets):
+
+        for i, (invest_col, borrow_col, ticker, label, invest_currency, borrow_currency) in enumerate(col_sets):
             # Amount Invested is fixed at 1
             amount_invested = 1
 
@@ -274,8 +274,11 @@ def create_pairs():
 
             tickerx = f"{ticker}=X"
             data = yf.download(tickerx, start=my_start_date.strftime('%Y-%m-%d'), end=my_end_date.strftime('%Y-%m-%d'), interval='1d')['Close']
+            
+            if data.empty:
+                data = 1/yf.download(f"{borrow_currency}{invest_currency}=X", start=my_start_date.strftime('%Y-%m-%d'), end=my_end_date.strftime('%Y-%m-%d'), interval='1d')['Close']
 
-
+        
             data = data.reset_index()
 
             data['Date'] = pd.to_datetime(data['Date']).dt.date
@@ -635,18 +638,16 @@ def main():
     
     menu = st.sidebar.selectbox("Select what you want to work with", ("Investment and Borrowing", "Asset Class Selection"))
 
+
     if menu == "Investment and Borrowing":
-        try:
-            create_pairs()
-        except (IndexError, KeyError):
-            reset_session()
+        create_pairs()
+
 
 
     elif menu == "Asset Class Selection":
-        try:
-            create_investment_asset_selection()  # Call the function to handle investment and borrowing pairs
-        except (IndexError, KeyError):
-            reset_session()
+        create_investment_asset_selection()  # Call the function to handle investment and borrowing pairs
+
+
 
 
 
