@@ -528,7 +528,7 @@ def create_investment_asset_selection():
         #if (df[(df['Date'] > pd.to_datetime(my_start_date)) & (df['Date'] < pd.to_datetime(my_end_date))].empty) or (my_end_date > date.today()):
         if (df[(df['Date'] > pd.to_datetime(my_start_date)) & (df['Date'] < pd.to_datetime(my_end_date))].empty) or (my_end_date.date() > date.today()):
             my_end_date = date.today()
-            #my_start_date = my_end_date - datetime.timedelta(365)
+            my_start_date = my_end_date - datetime.timedelta(365)
         
         #provaa   
         #my_end_date = date.today()
