@@ -238,8 +238,7 @@ def create_pairs():
 
         col_sets = []
         for index, row in choice.iterrows():
-            col_sets.append([row['Investment Code'],row['Borrowing Code'],row['exchange_pair'],row['Label'],
-                             row['invest_currency'],row['borrow_currency']])
+            col_sets.append([row['Investment Code'],row['Borrowing Code'],row['exchange_pair'],row['Label']])
 
         #    if not yf.download(f"{row['exchange_pair']}=X", start=my_start_date.strftime('%Y-%m-%d'), end=my_end_date.strftime('%Y-%m-%d'), interval='1d')['Close'].empty:
             
@@ -247,7 +246,7 @@ def create_pairs():
 
      
 
-        for i, (invest_col, borrow_col, ticker, label, invest_currency, borrow_currency) in enumerate(col_sets):
+        for i, (invest_col, borrow_col, ticker, label) in enumerate(col_sets):
             # Amount Invested is fixed at 1
             amount_invested = 1
 
