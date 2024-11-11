@@ -643,10 +643,7 @@ def main():
 
 
     elif menu == "Asset Class Selection":
-        try:
-            create_investment_asset_selection()  # Call the function to handle investment and borrowing pairs
-        except (IndexError, KeyError):
-            reset_session()
+        create_investment_asset_selection()  
 
 
 
