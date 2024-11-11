@@ -635,18 +635,19 @@ def main():
     
     menu = st.sidebar.selectbox("Select what you want to work with", ("Investment and Borrowing", "Asset Class Selection"))
 
+
     if menu == "Investment and Borrowing":
-        try:
-            create_pairs()
-        except (IndexError, KeyError):
-            reset_session()
+        create_pairs()
+
 
 
     elif menu == "Asset Class Selection":
-        try:
-            create_investment_asset_selection()  # Call the function to handle investment and borrowing pairs
-        except (IndexError, KeyError):
-            reset_session()
+        create_investment_asset_selection()  # Call the function to handle investment and borrowing pairs
+
+
+
+
+
 
 
 
