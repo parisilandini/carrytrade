@@ -51,7 +51,7 @@ st.markdown("""
 # Go to Paper button
 st.markdown('<div class="button-container">', unsafe_allow_html=True)
 if st.button('Go to Paper'):
-    st.markdown('<meta http-equiv="refresh" content="0;url=https://example.com">', unsafe_allow_html=True)
+    st.markdown('<meta http-equiv="refresh" content="0;url=https://parisi-landini.info">', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 
@@ -66,14 +66,14 @@ st.markdown('</div>', unsafe_allow_html=True)
 generate_colors = lambda n: [plt.cm.tab10(i / n) for i in range(n)]
 
 
-df = pd.read_excel("fred_codes.xlsx",sheet_name="FRED codes")
-portfolio = pd.read_excel("fred_codes.xlsx",sheet_name="Portfolio")
+df = pd.read_excel("./fred_codes.xlsx",sheet_name="FRED codes")
+portfolio = pd.read_excel("./fred_codes.xlsx",sheet_name="Portfolio")
 
 DFS = []
 countries = df['Country'].unique()
 asset_classes = ["Stock Index", "Bond", "REIT"]  # Available asset classes
 
-df = pd.read_excel("fred_codes.xlsx",sheet_name="FRED codes")
+df = pd.read_excel("./fred_codes.xlsx",sheet_name="FRED codes")
 days90 = df[df['Name'].str.contains("3-Month or 90-Day ", case=False, na=False)]
 
 stock = portfolio[["Country","Stock Index"]][portfolio['Stock Index']!=999]
@@ -199,7 +199,7 @@ def create_pairs():
 
 
 
-        df = pd.read_excel("fred_codes.xlsx",sheet_name="FRED codes")
+        df = pd.read_excel("./fred_codes.xlsx",sheet_name="FRED codes")
         days90 = df[df['Name'].str.contains("3-Month or 90-Day ", case=False, na=False)]
         overnight = df[df['Name'].str.contains("Call ", case=False, na=False)]
 
@@ -218,7 +218,7 @@ def create_pairs():
 
 
         choice = choice.drop(columns=['Start Date', 'End Date',
-                                     #'invest_currency','borrow_currency',
+                                     'invest_currency','borrow_currency',
                                      'Country_x','Country_y'])
 
 
@@ -238,23 +238,22 @@ def create_pairs():
 
         col_sets = []
         for index, row in choice.iterrows():
-            col_sets.append([row['Investment Code'],row['Borrowing Code'],row['exchange_pair'],row['Label'],
-                             row['invest_currency'],row['borrow_currency']])
-
-        #    if not yf.download(f"{row['exchange_pair']}=X", start=my_start_date.strftime('%Y-%m-%d'), end=my_end_date.strftime('%Y-%m-%d'), interval='1d')['Close'].empty:
-            
-            ###elif choice['exchange_pair'] = choice['invest_currency'] + choice['borrow_currency']
+            if not yf.download(f"{row['exchange_pair']}=X", start=my_start_date.strftime('%Y-%m-%d'), end=my_end_date.strftime('%Y-%m-%d'), interval='1d')['Close'].empty:
+                col_sets.append([row['Investment Code'],row['Borrowing Code'],row['exchange_pair'],row['Label']])
 
      
 
-        for i, (invest_col, borrow_col, ticker, label, invest_currency, borrow_currency) in enumerate(col_sets):
+        for i, (invest_col, borrow_col, ticker, label) in enumerate(col_sets):
             # Amount Invested is fixed at 1
             amount_invested = 1
 
 
 
 
-            fred = Fred(api_key='4ff94616949b02a01853e8effd6b5999')
+
+            fred_api_key = st.secrets["FRED_API_KEY"]
+            fred = Fred(api_key=fred_api_key)
+
             series_ids = [invest_col, borrow_col]
             data = {}
             for series_id in series_ids:
@@ -275,11 +274,6 @@ def create_pairs():
 
             tickerx = f"{ticker}=X"
             data = yf.download(tickerx, start=my_start_date.strftime('%Y-%m-%d'), end=my_end_date.strftime('%Y-%m-%d'), interval='1d')['Close']
-
-            if data.empty:
-                data = 1/yf.download(f"{borrow_currency}{invest_currency}=X", start=my_start_date.strftime('%Y-%m-%d'), end=my_end_date.strftime('%Y-%m-%d'), interval='1d')['Close']
-                ticker = f"{borrow_currency}{invest_currency}"
-
 
 
             data = data.reset_index()
@@ -374,9 +368,9 @@ def create_investment_asset_selection():
 
 
 
-            df = pd.read_excel("fred_codes.xlsx",sheet_name="FRED codes")
+            df = pd.read_excel("./fred_codes.xlsx",sheet_name="FRED codes")
             days90 = df[df['Name'].str.contains("3-Month or 90-Day ", case=False, na=False)]
-            portfolio = pd.read_excel("fred_codes.xlsx",sheet_name="Portfolio")
+            portfolio = pd.read_excel("./fred_codes.xlsx",sheet_name="Portfolio")
             stock = portfolio[["Country","Stock Index"]][portfolio['Stock Index']!=999]
             bond = portfolio[["Country","Bond"]][portfolio['Bond']!=999]
             reit = portfolio[["Country","REIT"]][portfolio['REIT']!=999]
@@ -464,9 +458,9 @@ def create_investment_asset_selection():
         scelta = final_assets_df
 
 
-        df = pd.read_excel("fred_codes.xlsx",sheet_name="FRED codes")
+        df = pd.read_excel("./fred_codes.xlsx",sheet_name="FRED codes")
         days90 = df[df['Name'].str.contains("3-Month or 90-Day ", case=False, na=False)]
-        portfolio = pd.read_excel("fred_codes.xlsx",sheet_name="Portfolio")
+        portfolio = pd.read_excel("./fred_codes.xlsx",sheet_name="Portfolio")
         stock = portfolio[["Country","Stock Index"]][portfolio['Stock Index']!=999]
         bond = portfolio[["Country","Bond"]][portfolio['Bond']!=999]
         reit = portfolio[["Country","REIT"]][portfolio['REIT']!=999]
@@ -516,14 +510,15 @@ def create_investment_asset_selection():
             
             
             
-        fred = Fred(api_key='4ff94616949b02a01853e8effd6b5999')
 
+        fred_api_key = st.secrets["FRED_API_KEY"]
+        fred = Fred(api_key=fred_api_key)
         DFS = []
 
         # FRED ####################################################################################
         data = {}
 
-        data[choice['Borrowing Code'][0]] = fred.get_series(choice['Borrowing Code'][0])/100
+        data[choice['Borrowing Code'].iloc[0]] = fred.get_series(choice['Borrowing Code'].iloc[0])/100
 
         df = pd.DataFrame(data)
         df['Date'] = df.index
@@ -574,6 +569,7 @@ def create_investment_asset_selection():
 
             # Drop the last row because S_{t+T} will be NaN for it
             merged_filtered = merged.dropna()
+            merged_filtered = merged_filtered.reset_index(drop=True)
             T=90
             # Calculate the profit for each row
             merged_filtered['Profit %'] =  ((merged_filtered[row['Investing Code']]/merged_filtered[row['Investing Code']].iloc[0] - merged_filtered[row['Borrowing Code']]) * 
@@ -640,13 +636,17 @@ def main():
     menu = st.sidebar.selectbox("Select what you want to work with", ("Investment and Borrowing", "Asset Class Selection"))
 
     if menu == "Investment and Borrowing":
-        create_pairs()
-
+        try:
+            create_pairs()
+        except (IndexError, KeyError):
+            reset_session()
 
 
     elif menu == "Asset Class Selection":
-        create_investment_asset_selection()  # Call the function to handle investment and borrowing pairs
-
+        try:
+            create_investment_asset_selection()  # Call the function to handle investment and borrowing pairs
+        except (IndexError, KeyError):
+            reset_session()
 
 
 
