@@ -279,7 +279,7 @@ def create_pairs():
             if data.empty:
                 data = 1/yf.download(f"{borrow_currency}{invest_currency}=X", start=my_start_date.strftime('%Y-%m-%d'), end=my_end_date.strftime('%Y-%m-%d'), interval='1d')['Close']
                 ticker = f"{borrow_currency}{invest_currency}"
-                print("porcoddio")
+                tickerx = f"{ticker}=X"
 
 
 
