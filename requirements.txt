@@ -5,5 +5,3 @@ yfinance==0.2.48
 fredapi
 matplotlib==3.8.0
 openpyxl
-
-
