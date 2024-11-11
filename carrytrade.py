@@ -218,7 +218,7 @@ def create_pairs():
 
 
         choice = choice.drop(columns=['Start Date', 'End Date',
-                                     #'invest_currency','borrow_currency',
+                                     'invest_currency','borrow_currency',
                                      'Country_x','Country_y'])
 
 
@@ -276,11 +276,6 @@ def create_pairs():
             tickerx = f"{ticker}=X"
             data = yf.download(tickerx, start=my_start_date.strftime('%Y-%m-%d'), end=my_end_date.strftime('%Y-%m-%d'), interval='1d')['Close']
 
-            if data.empty:
-                data = 1/yf.download(f"{borrow_currency}{invest_currency}=X", start=my_start_date.strftime('%Y-%m-%d'), end=my_end_date.strftime('%Y-%m-%d'), interval='1d')['Close']
-                ticker = f"{borrow_currency}{invest_currency}"
-                print("porcoddio")
-
 
 
             data = data.reset_index()
@@ -293,10 +288,6 @@ def create_pairs():
 
             merged_df = merged_df.rename(columns={tickerx: ticker,})
             merged = merged_df.dropna()
-
-            print(data.head())
-            print(df.head())
-            print(merged.head())
 
             
             merged['S_t+T'] = merged[ticker].shift(1)
